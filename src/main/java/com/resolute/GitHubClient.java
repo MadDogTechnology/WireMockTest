@@ -75,10 +75,10 @@ public class GitHubClient {
         OkHttpClient client = new OkHttpClient.Builder()
                 .build();
 
-        System.out.println("\n");
-        System.out.println("Line 78:");
-        System.out.println(client);
-        System.out.println("\n");
+        // System.out.println("\n");
+        // System.out.println("Line 78:");
+        // System.out.println(client);
+        // System.out.println("\n");
         
         Request request = new Request.Builder()
                 .url(baseUrl + apiEndpoint)
