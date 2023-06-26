@@ -15,6 +15,7 @@ import okhttp3.Response;
 public class GitHubClient {
 
     private static final String API_ENDPOINT = "/repos/oaydas23/test";
+    private static final String TARGET_URL = "http://api.github.com";
     private static final int WIREMOCK_PORT = 1234;
     private WireMockServer wireMockServer;
         
@@ -37,7 +38,7 @@ public class GitHubClient {
 
     public void recordApiRequest() {
         // Start recording
-        WireMock.startRecording("http://api.github.com");
+        WireMock.startRecording(TARGET_URL);
 
         // Make the actual API request
         // Replace {owner} and {repo} with actual values
@@ -47,8 +48,23 @@ public class GitHubClient {
 
         // Make a GET request to the GitHub API endpoint
         // Replace {owner} and {repo} with actual values
-        stubFor(get(urlMatching(API_ENDPOINT))
-                .willReturn(aResponse().proxiedFrom("https://api.github.com")));
+
+        OkHttpClient client = new OkHttpClient.Builder()
+            .build();
+
+        Request request = new Request.Builder()
+            .url(TARGET_URL + API_ENDPOINT)
+            .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            stubFor(get(urlMatching(API_ENDPOINT))
+                .willReturn(aResponse()
+                .withStatus(response.code())
+                .withBody(response.body().string())));
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
 
         // Stop recording and save the recorded mappings
         WireMock.stopRecording();
@@ -86,7 +102,7 @@ public class GitHubClient {
 
         try (Response response = client.newCall(request).execute()) {
             // Process the response as needed
-            System.out.println("Replayed response status code: " + response.body().string());
+            System.out.println("Response body: " + response.body().string());
             // Handle the response body, headers, etc.
         } catch (IOException e) {
             e.printStackTrace();

@@ -5,5 +5,3 @@ This application utilizes WireMock and JUnit to test code using a record and pla
 # Testing
 
 In the GitHubClientTest class, we utilize JUnit to perform tests in unison with WireMock's playback features, and more features can and will be added to create a more encompassing test.
-
-hi
